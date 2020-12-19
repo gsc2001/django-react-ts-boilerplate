@@ -1,16 +1,28 @@
-django_react_boilerplate ========================
+# Django React graphql Template
 
-[![Built with Cookiecutter React Django](https://img.shields.io/badge/built%20with-Cookiecutter%20React%20Django-blue)](https://img.shields.io/badge/built%20with-Cookiecutter%20React%20Django-blue)
+Full featured django react template so that you can get to your work started immediately
 
-## Local setup
-On your terminal, simply do `docker-compose up --build`, and wait for the containers to build. Eventually, you'll be able to see the index page by going to `[http://127.0.0.1/](http://127.0.0.1/)`.
+### Development
 
-## Test coverage
-To run the tests, check your test coverage, and generate a coverage report:
+-   Just do `docker-compose up -d`
+-   your app will be there at localhost:8000
 
 ```
-docker-compose run --rm django pytest
+Note: db_interface/ does not work right now , for now to access pgadmin go to localhost:8080/
 ```
 
-## Deployment
-You can check how to deploy your app to Heroku [here](https://github.com/ohduran/cookiecutter-react-django#deploy-to-heroku)
+### Deployment
+
+The app is full ready to be deployed on heroku.
+
+#### Steps
+
+-   Install heroku cli
+-   `heroku create`
+-   `heroku config:set SECRET_KEY=yoursecret DJANGO_SETTINGS_MODULE=backend.settings.production`
+-   Add postgresql addon
+    -   `heroku addons:create heroku-postgresql:hobby-dev`
+-   `heroku stack:set container`
+-   `git push heroku master`
+
+Deployed!!
