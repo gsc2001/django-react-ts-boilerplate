@@ -1,0 +1,87 @@
+version: '3.7'
+services:
+    db:
+        image: postgres
+        environment:
+            POSTGRES_USER: $DB_USER
+            POSTGRES_PASSWORD: $DB_PASSWORD
+            POSTGRES_DB: $DB_CORE
+        restart: unless-stopped
+        networks:
+            - db_net
+        volumes:
+            - db_vol:/var/lib/postgresql/data
+        restart: always
+
+    db_interface:
+        image: dpage/pgadmin4
+        restart: always
+        environment: 
+            PGADMIN_DEFAULT_EMAIL: $PGADMIN_EMAIL
+            PGADMIN_DEFAULT_PASSWORD: $PGADMIN_PASS
+        networks: 
+            - db_net
+            - web_net
+        ports:
+            - 8080:80
+        depends_on: 
+            - db
+
+    backend:
+        build: ./backend
+        restart: always
+        volumes:
+            - ./backend:/app/backend
+            - ./docs:/app/docs
+        environment:
+            DJANGO_SETTINGS_MODULE: $DJANGO_SETTINGS_MODULE
+            DEBUG: $DEBUG
+            DB_USER: $DB_USER
+            DB_PASSWORD: $DB_PASSWORD
+            DB_CORE: $DB_CORE
+            DB_HOST: $DB_HOST
+            DB_PORT: $DB_PORT
+        depends_on: 
+            - db
+        networks: 
+            - db_net
+            - web_net
+    frontend:
+        build: ./frontend
+        restart: unless-stopped
+        volumes:
+            - ./frontend:/app
+            - /app/node_modules
+        environment:
+            NODE_ENV: development
+            CHOKIDAR_USEPOLLING: 'true'
+        ports: 
+            - 3000:3000
+        depends_on:
+            - backend
+        networks:
+            - web_net
+
+    nginx:
+        image: nginx:latest
+        ports:
+            - 8000:80
+            # - 3000:3000
+        volumes:
+            - ./config/nginx:/etc/nginx/conf.d/
+        depends_on:
+            - frontend
+            - backend
+            - db_interface
+        networks:
+            - web_net
+        
+        
+networks:
+    web_net:
+        driver: bridge
+    db_net:
+        driver: bridge
+
+volumes:
+    db_vol:
