@@ -1,10 +1,11 @@
 import os
+import django_heroku
 
 from .base import *
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = False
-ALLOWED_HOSTS = [os.environ.get("PRODUCTION_HOST")]
+ALLOWED_HOSTS = ["*"]
 
 
 # White Noise configuration - http://whitenoise.evans.io/en/stable/django.html
@@ -19,5 +20,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "../", "frontend", "build", "static")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+
+django_heroku.settings(locals())
 STATIC_URL = "/static/"
 WHITENOISE_ROOT = os.path.join(BASE_DIR, "../", "frontend", "build", "root")
+

@@ -11,7 +11,7 @@ WORKDIR /app/backend
 
 # Install Python dependencies
 COPY ./backend/requirements /app/backend/requirements
-RUN pip install -r requirements/production.txt
+RUN pip install -r requirements/requirements.txt
 
 # Install JS dependencies
 WORKDIR /app/frontend
@@ -43,4 +43,5 @@ RUN DJANGO_SETTINGS_MODULE=backend.settings.production \
 
 EXPOSE $PORT
 
-CMD python3 backend/manage.py runserver 0.0.0.0:$PORT
+CMD [ "gunicorn", "backend.wsgi" , '--chdir', 'backend', '--log-file', '-']
+
